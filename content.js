@@ -12,7 +12,8 @@ async function sha1(str) {
 function captureSticker(el) {
   const images = [...el.querySelectorAll("img")].map(img => img.src).filter(Boolean);
   const anchor = el.querySelector("a[href]") || el.closest("a[href]");
-  const link = anchor ? anchor.href : null;
+  const rawHref = anchor ? anchor.getAttribute("href") : null;
+  const link = rawHref && !rawHref.startsWith("about:") ? rawHref : null;
 
   return {
     images,
