@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Remove YouTube Affiliate Overlay",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Remove a tag yt-overlay-sticker do YouTube e notifica o usuário",
   "permissions": ["storage", "tabs"],
   "background": {
