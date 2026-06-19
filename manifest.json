@@ -7,9 +7,15 @@
   "background": {
     "service_worker": "background.js"
   },
+  "icons": {
+    "128": "icon128.png"
+  },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Stickers removidos"
+    "default_title": "Stickers removidos",
+    "default_icon": {
+      "128": "icon128.png"
+    }
   },
   "content_scripts": [
     {
