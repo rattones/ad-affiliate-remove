@@ -31,7 +31,7 @@ async function processQueue() {
   const batch = pendingStickers.splice(0);
 
   const withHashes = await Promise.all(
-    batch.map(async s => ({ ...s, hash: await sha1(s.html) }))
+    batch.map(async s => ({ ...s, hash: await sha1(s.url) }))
   );
 
   chrome.storage.local.get("stickers", ({ stickers = [] }) => {
