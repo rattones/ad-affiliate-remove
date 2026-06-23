@@ -152,12 +152,77 @@
       color: #3ea6ff;
       flex-shrink: 0;
     }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .toggle-label {
+      font-size: 11px;
+      color: #aaa;
+      min-width: 26px;
+    }
+
+    .toggle {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .toggle input { display: none; }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: #555;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .toggle-track::after {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 3px;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    .toggle input:checked + .toggle-track {
+      background: #2ba640;
+    }
+
+    .toggle input:checked + .toggle-track::after {
+      transform: translateX(16px);
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>Stickers removidos</h1>
-    <button id="clearBtn">Limpar</button>
+    <div class="header-actions">
+      <div class="toggle-wrap">
+        <span class="toggle-label" id="toggleLabel">ON</span>
+        <label class="toggle">
+          <input type="checkbox" id="toggleBtn" checked>
+          <span class="toggle-track"></span>
+        </label>
+      </div>
+      <button id="clearBtn">Limpar</button>
+    </div>
   </header>
   <div id="stickers"></div>
   <script src="popup.js"></script>

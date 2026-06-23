@@ -1,5 +1,6 @@
 let pendingStickers = [];
 let debounceTimer = null;
+let observer = null;
 
 async function sha1(str) {
   const buffer = new TextEncoder().encode(str);
@@ -63,11 +64,25 @@ function removeOverlayStickers() {
   }
 }
 
-removeOverlayStickers();
+function startObserver() {
+  if (observer) return;
+  removeOverlayStickers();
+  observer = new MutationObserver(() => removeOverlayStickers());
+  observer.observe(document.body, { childList: true, subtree: true });
+}
+
+function stopObserver() {
+  if (!observer) return;
+  observer.disconnect();
+  observer = null;
+}
 
 // Observa mudanças no DOM para remover elementos carregados dinamicamente
-const observer = new MutationObserver(() => {
-  removeOverlayStickers();
+chrome.storage.local.get("enabled", ({ enabled = true }) => {
+  if (enabled) startObserver();
 });
 
-observer.observe(document.body, { childList: true, subtree: true });
+chrome.storage.onChanged.addListener(({ enabled }) => {
+  if (enabled === undefined) return;
+  enabled.newValue ? startObserver() : stopObserver();
+});

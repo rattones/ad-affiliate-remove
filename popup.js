@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   loadStickers();
+  loadToggleState();
 
   document.getElementById("clearBtn").addEventListener("click", () => {
     chrome.storage.local.set({ stickers: [] }, () => {
@@ -7,7 +8,28 @@ document.addEventListener("DOMContentLoaded", () => {
       loadStickers();
     });
   });
+
+  document.getElementById("toggleBtn").addEventListener("change", (e) => {
+    const enabled = e.target.checked;
+    chrome.storage.local.set({ enabled }, () => {
+      updateToggleLabel(enabled);
+      chrome.runtime.sendMessage({
+        type: enabled ? "EXTENSION_ENABLED" : "EXTENSION_DISABLED"
+      });
+    });
+  });
 });
+
+function loadToggleState() {
+  chrome.storage.local.get("enabled", ({ enabled = true }) => {
+    document.getElementById("toggleBtn").checked = enabled;
+    updateToggleLabel(enabled);
+  });
+}
+
+function updateToggleLabel(enabled) {
+  document.getElementById("toggleLabel").textContent = enabled ? "ON" : "OFF";
+}
 
 function loadStickers() {
   chrome.storage.local.get("stickers", ({ stickers = [] }) => {
