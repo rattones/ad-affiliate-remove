@@ -92,7 +92,7 @@ function renderStickers(stickers) {
       </div>
       ${group.items.map(s => `
         <div class="sticker-card">
-          <div class="sticker-main${s.link ? " clickable" : ""}"
+          <div class="sticker-main${s.link ? " clickable" : s.products?.length ? " expandable" : ""}"
                ${s.link ? `data-href="${escHtml(s.link)}"` : ""}>
             ${s.mainImage
               ? `<img class="sticker-thumb" src="${escHtml(s.mainImage)}" alt="">`
@@ -118,6 +118,13 @@ function renderStickers(stickers) {
 function attachListeners() {
   document.querySelectorAll(".sticker-main.clickable, .product-item.clickable").forEach(el => {
     el.addEventListener("click", () => chrome.tabs.create({ url: el.dataset.href }));
+  });
+
+  document.querySelectorAll(".sticker-main.expandable").forEach(el => {
+    el.addEventListener("click", () => {
+      const details = el.nextElementSibling;
+      if (details?.tagName === "DETAILS") details.open = !details.open;
+    });
   });
 }
 

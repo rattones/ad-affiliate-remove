@@ -34,9 +34,11 @@ function captureProduct(el) {
 }
 
 function captureSticker(el) {
-  // The "actual" img (not the shadow copies) always has the product image + title in alt
-  const mainImgEl = el.querySelector("img.ytImageStickerImageActual");
-  const mainImage = mainImgEl ? mainImgEl.src : null;
+  // Prefer the "actual" image (not shadow copies); fall back to any img with a real src
+  const mainImgEl = el.querySelector("img.ytImageStickerImageActual")
+    || [...el.querySelectorAll("img")].find(img => img.getAttribute("src"));
+  const rawSrc   = mainImgEl ? mainImgEl.getAttribute("src") : null;
+  const mainImage = rawSrc ? mainImgEl.src : null;
   const mainTitle = mainImgEl ? mainImgEl.alt : null;
 
   // One-product: anchor has the real affiliate URL
