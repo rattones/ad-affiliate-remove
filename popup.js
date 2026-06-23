@@ -45,12 +45,34 @@ function groupByUrl(stickers) {
   }, {});
 }
 
-function attachCardListeners() {
-  document.querySelectorAll(".sticker-card.clickable").forEach(card => {
-    card.addEventListener("click", () => {
-      chrome.tabs.create({ url: card.dataset.href });
-    });
-  });
+function renderProducts(products) {
+  if (!products || !products.length) return "";
+
+  const label = `${products.length} produto${products.length !== 1 ? "s" : ""}`;
+
+  const items = products.map(p => `
+    <div class="product-item${p.link ? " clickable" : ""}"
+         ${p.link ? `data-href="${escHtml(p.link)}"` : ""}>
+      ${p.image
+        ? `<img class="product-thumb" src="${escHtml(p.image)}" alt="">`
+        : `<div class="product-thumb-placeholder"></div>`
+      }
+      <div class="product-info">
+        <div class="product-title">${escHtml(p.title || "Produto")}</div>
+        ${(p.merchant || p.price) ? `
+          <div class="product-meta">
+            ${[p.merchant, p.price].filter(Boolean).map(escHtml).join(" · ")}
+          </div>` : ""}
+      </div>
+      ${p.link ? `<span class="arrow">↗</span>` : ""}
+    </div>
+  `).join("");
+
+  return `
+    <details class="products">
+      <summary>${label}</summary>
+      <div class="product-list">${items}</div>
+    </details>`;
 }
 
 function renderStickers(stickers) {
@@ -69,24 +91,34 @@ function renderStickers(stickers) {
         ${escHtml(group.pageTitle || group.url)}
       </div>
       ${group.items.map(s => `
-        <div class="sticker-card${s.link ? " clickable" : ""}" ${s.link ? `data-href="${escHtml(s.link)}"` : ""}>
-          ${s.images.length
-            ? `<img class="sticker-thumb" src="${escHtml(s.images[0])}" alt="sticker">`
-            : `<div class="sticker-placeholder">🏷️</div>`
-          }
-          <div class="sticker-info">
-            <div class="sticker-page">${escHtml(group.pageTitle || "YouTube")}</div>
-            <div class="sticker-time">${new Date(s.timestamp).toLocaleTimeString("pt-BR")}</div>
-            ${s.text ? `<div class="sticker-text">${escHtml(s.text)}</div>` : ""}
-            ${s.link ? `<div class="sticker-link">${escHtml(s.link)}</div>` : ""}
+        <div class="sticker-card">
+          <div class="sticker-main${s.link ? " clickable" : ""}"
+               ${s.link ? `data-href="${escHtml(s.link)}"` : ""}>
+            ${s.mainImage
+              ? `<img class="sticker-thumb" src="${escHtml(s.mainImage)}" alt="">`
+              : `<div class="sticker-placeholder">🏷️</div>`
+            }
+            <div class="sticker-info">
+              <div class="sticker-page">${escHtml(group.pageTitle || "YouTube")}</div>
+              <div class="sticker-time">${new Date(s.timestamp).toLocaleTimeString("pt-BR")}</div>
+              ${s.mainTitle ? `<div class="sticker-title">${escHtml(s.mainTitle)}</div>` : ""}
+              ${s.link ? `<div class="sticker-link">${escHtml(s.link)}</div>` : ""}
+            </div>
+            ${s.link ? `<span class="arrow">↗</span>` : ""}
           </div>
-          ${s.link ? `<span class="sticker-arrow">↗</span>` : ""}
+          ${renderProducts(s.products)}
         </div>
       `).join("")}
     </div>
   `).join("");
 
-  attachCardListeners();
+  attachListeners();
+}
+
+function attachListeners() {
+  document.querySelectorAll(".sticker-main.clickable, .product-item.clickable").forEach(el => {
+    el.addEventListener("click", () => chrome.tabs.create({ url: el.dataset.href }));
+  });
 }
 
 function escHtml(str) {

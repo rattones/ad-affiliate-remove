@@ -6,8 +6,8 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      width: 380px;
-      max-height: 500px;
+      width: 400px;
+      max-height: 560px;
       overflow-y: auto;
       font-family: "Roboto", Arial, sans-serif;
       background: #0f0f0f;
@@ -26,187 +26,136 @@
       z-index: 10;
     }
 
-    header h1 {
-      font-size: 14px;
-      font-weight: 600;
-      color: #f1f1f1;
+    header h1 { font-size: 14px; font-weight: 600; }
+
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+
+    .toggle-wrap { display: flex; align-items: center; gap: 6px; }
+
+    .toggle-label { font-size: 11px; color: #aaa; min-width: 26px; }
+
+    .toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+    .toggle input { display: none; }
+    .toggle-track {
+      position: absolute; inset: 0;
+      background: #555; border-radius: 20px;
+      cursor: pointer; transition: background 0.2s;
     }
+    .toggle-track::after {
+      content: ""; position: absolute;
+      left: 3px; top: 3px; width: 14px; height: 14px;
+      background: #fff; border-radius: 50%; transition: transform 0.2s;
+    }
+    .toggle input:checked + .toggle-track { background: #2ba640; }
+    .toggle input:checked + .toggle-track::after { transform: translateX(16px); }
 
     #clearBtn {
-      font-size: 12px;
-      padding: 4px 10px;
-      border: 1px solid #555;
-      border-radius: 4px;
-      background: transparent;
-      color: #aaa;
-      cursor: pointer;
+      font-size: 12px; padding: 4px 10px;
+      border: 1px solid #555; border-radius: 4px;
+      background: transparent; color: #aaa; cursor: pointer;
     }
-
-    #clearBtn:hover {
-      background: #333;
-      color: #f1f1f1;
-    }
+    #clearBtn:hover { background: #333; color: #f1f1f1; }
 
     .empty {
-      padding: 32px 16px;
-      text-align: center;
-      color: #717171;
-      font-size: 13px;
+      padding: 32px 16px; text-align: center;
+      color: #717171; font-size: 13px;
     }
 
-    .group {
-      border-bottom: 1px solid #272727;
-    }
+    /* ── Page group ── */
+    .group { border-bottom: 1px solid #272727; }
 
     .group-header {
-      padding: 8px 16px;
-      background: #181818;
-      font-size: 11px;
-      color: #717171;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      padding: 8px 16px; background: #181818;
+      font-size: 11px; color: #717171;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    .sticker-card {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 16px;
-      border-top: 1px solid #272727;
-    }
+    /* ── Sticker card ── */
+    .sticker-card { display: flex; flex-direction: column; border-top: 1px solid #272727; }
 
-    .sticker-card:hover {
-      background: #1a1a1a;
+    .sticker-main {
+      display: flex; align-items: center;
+      gap: 12px; padding: 10px 16px;
     }
+    .sticker-main.clickable { cursor: pointer; }
+    .sticker-main.clickable:hover { background: #1f1f1f; outline: 1px solid #3d3d3d; }
 
     .sticker-thumb {
-      width: 48px;
-      height: 48px;
-      object-fit: contain;
-      border-radius: 4px;
-      background: #272727;
-      flex-shrink: 0;
+      width: 48px; height: 48px;
+      object-fit: contain; border-radius: 4px;
+      background: #272727; flex-shrink: 0;
     }
-
     .sticker-placeholder {
-      width: 48px;
-      height: 48px;
-      border-radius: 4px;
-      background: #272727;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
+      width: 48px; height: 48px; border-radius: 4px;
+      background: #272727; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
     }
 
-    .sticker-info {
-      flex: 1;
-      overflow: hidden;
-    }
+    .sticker-info { flex: 1; overflow: hidden; }
 
     .sticker-page {
-      font-size: 12px;
-      color: #f1f1f1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 12px; color: #f1f1f1;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-
-    .sticker-time {
-      font-size: 11px;
-      color: #717171;
-      margin-top: 2px;
+    .sticker-time { font-size: 11px; color: #717171; margin-top: 2px; }
+    .sticker-title {
+      font-size: 11px; color: #e0e0e0; margin-top: 3px;
+      overflow: hidden; display: -webkit-box;
+      -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical;
     }
-
-    .sticker-text {
-      font-size: 11px;
-      color: #aaa;
-      margin-top: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .sticker-card.clickable {
-      cursor: pointer;
-    }
-
-    .sticker-card.clickable:hover {
-      background: #1f1f1f;
-      outline: 1px solid #3d3d3d;
-    }
-
     .sticker-link {
-      font-size: 10px;
-      color: #3ea6ff;
-      margin-top: 3px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 10px; color: #3ea6ff; margin-top: 3px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .arrow { font-size: 14px; color: #3ea6ff; flex-shrink: 0; }
+
+    /* ── Product list (collapsible) ── */
+    .products { border-top: 1px solid #1e1e1e; }
+
+    .products summary {
+      display: flex; align-items: center; gap: 6px;
+      padding: 7px 16px 7px 20px;
+      font-size: 11px; color: #aaa;
+      cursor: pointer; user-select: none; list-style: none;
+    }
+    .products summary::-webkit-details-marker { display: none; }
+    .products summary::before {
+      content: "▶"; font-size: 8px; color: #555;
+      transition: transform 0.15s;
+    }
+    .products[open] summary::before { transform: rotate(90deg); }
+    .products summary:hover { background: #181818; }
+
+    .product-list { border-top: 1px solid #1e1e1e; }
+
+    .product-item {
+      display: flex; align-items: center;
+      gap: 10px; padding: 8px 14px 8px 20px;
+      border-top: 1px solid #1a1a1a;
+    }
+    .product-item.clickable { cursor: pointer; }
+    .product-item.clickable:hover { background: #1a1a1a; outline: 1px solid #2e2e2e; }
+
+    .product-thumb {
+      width: 40px; height: 40px;
+      object-fit: contain; border-radius: 3px;
+      background: #272727; flex-shrink: 0;
+    }
+    .product-thumb-placeholder {
+      width: 40px; height: 40px; border-radius: 3px;
+      background: #272727; flex-shrink: 0;
     }
 
-    .sticker-arrow {
-      font-size: 14px;
-      color: #3ea6ff;
-      flex-shrink: 0;
+    .product-info { flex: 1; overflow: hidden; }
+    .product-title {
+      font-size: 11px; color: #e0e0e0;
+      overflow: hidden; display: -webkit-box;
+      -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical;
     }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .toggle-wrap {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .toggle-label {
-      font-size: 11px;
-      color: #aaa;
-      min-width: 26px;
-    }
-
-    .toggle {
-      position: relative;
-      width: 36px;
-      height: 20px;
-      flex-shrink: 0;
-    }
-
-    .toggle input { display: none; }
-
-    .toggle-track {
-      position: absolute;
-      inset: 0;
-      background: #555;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .toggle-track::after {
-      content: "";
-      position: absolute;
-      left: 3px;
-      top: 3px;
-      width: 14px;
-      height: 14px;
-      background: #fff;
-      border-radius: 50%;
-      transition: transform 0.2s;
-    }
-
-    .toggle input:checked + .toggle-track {
-      background: #2ba640;
-    }
-
-    .toggle input:checked + .toggle-track::after {
-      transform: translateX(16px);
+    .product-meta {
+      font-size: 10px; color: #717171; margin-top: 2px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
   </style>
 </head>

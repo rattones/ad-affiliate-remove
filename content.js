@@ -10,18 +10,52 @@ async function sha1(str) {
     .join("");
 }
 
-function captureSticker(el) {
-  const images = [...el.querySelectorAll("img")].map(img => img.src).filter(Boolean);
-  const anchor = el.querySelector("a[href]") || el.closest("a[href]");
-  const rawHref = anchor ? anchor.getAttribute("href") : null;
+function captureProduct(el) {
+  const titleEl  = el.querySelector("#product-title");
+  const merchantEl = el.querySelector("#merchant-name");
+  const priceEl  = el.querySelector("#product-price, #product-price-replacement");
+  const imgEl    = el.querySelector("img#img");
+  const linkEl   = el.querySelector("a#container");
+
+  const rawHref = linkEl ? linkEl.getAttribute("href") : null;
   const link = rawHref && !rawHref.startsWith("about:") ? rawHref : null;
 
+  // img.src resolves to page URL when src=""; use getAttribute to detect empty
+  const rawSrc = imgEl ? imgEl.getAttribute("src") : null;
+  const image = rawSrc ? imgEl.src : null;
+
   return {
-    images,
+    title:    titleEl    ? titleEl.textContent.trim()    : null,
+    merchant: merchantEl ? merchantEl.textContent.trim() : null,
+    price:    priceEl    ? priceEl.textContent.trim()    : null,
+    image,
+    link
+  };
+}
+
+function captureSticker(el) {
+  // The "actual" img (not the shadow copies) always has the product image + title in alt
+  const mainImgEl = el.querySelector("img.ytImageStickerImageActual");
+  const mainImage = mainImgEl ? mainImgEl.src : null;
+  const mainTitle = mainImgEl ? mainImgEl.alt : null;
+
+  // One-product: anchor has the real affiliate URL
+  // Multiple-products: anchor href is "about:invalid#zClosurez"
+  const anchor  = el.querySelector("a.ytOverlayProductStickerImageContainer");
+  const rawHref = anchor ? anchor.getAttribute("href") : null;
+  const link    = rawHref && !rawHref.startsWith("about:") ? rawHref : null;
+
+  // Multiple-product stickers: product list lives in a separate DOM panel
+  const products = link
+    ? []
+    : [...document.querySelectorAll("ytd-product-list-item-renderer")].map(captureProduct);
+
+  return {
+    mainImage,
+    mainTitle,
     link,
-    text: el.textContent.trim(),
-    html: el.outerHTML,
-    url: window.location.href,
+    products,
+    url:       window.location.href,
     pageTitle: document.title,
     timestamp: Date.now()
   };
@@ -36,6 +70,7 @@ async function processQueue() {
   );
 
   chrome.storage.local.get("stickers", ({ stickers = [] }) => {
+    console.log("stickers: ", JSON.stringify(stickers));
     const seen = new Set(stickers.map(s => s.hash));
     const newOnes = withHashes.filter(s => {
       if (seen.has(s.hash)) return false;
@@ -77,7 +112,6 @@ function stopObserver() {
   observer = null;
 }
 
-// Observa mudanças no DOM para remover elementos carregados dinamicamente
 chrome.storage.local.get("enabled", ({ enabled = true }) => {
   if (enabled) startObserver();
 });
