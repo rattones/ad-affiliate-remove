@@ -11,18 +11,20 @@ async function sha1(str) {
 }
 
 function captureProduct(el) {
-  const titleEl  = el.querySelector("#product-title");
+  const titleEl    = el.querySelector("#product-title");
   const merchantEl = el.querySelector("#merchant-name");
-  const priceEl  = el.querySelector("#product-price, #product-price-replacement");
-  const imgEl    = el.querySelector("img#img");
-  const linkEl   = el.querySelector("a#container");
+  const priceEl    = el.querySelector("#product-price, #product-price-replacement");
 
-  const rawHref = linkEl ? linkEl.getAttribute("href") : null;
-  const link = rawHref && !rawHref.startsWith("about:") ? rawHref : null;
-
-  // img.src resolves to page URL when src=""; use getAttribute to detect empty
+  // Image lives inside yt-img-shadow > img
+  const imgEl  = el.querySelector("yt-img-shadow img");
   const rawSrc = imgEl ? imgEl.getAttribute("src") : null;
-  const image = rawSrc ? imgEl.src : null;
+  const image  = rawSrc || null;
+
+  // Link is not a DOM href — it's stored in Polymer's __data on ytd-button-renderer
+  const buttonEl = el.querySelector("ytd-button-renderer");
+  const bData    = buttonEl?.__data || {};
+  const endpoint = bData?.data?.serviceEndpoint || bData?.serviceEndpoint || {};
+  const link     = endpoint?.commandMetadata?.webCommandMetadata?.url || null;
 
   return {
     title:    titleEl    ? titleEl.textContent.trim()    : null,
@@ -34,10 +36,11 @@ function captureProduct(el) {
 }
 
 function captureSticker(el) {
-  // Prefer the "actual" image (not shadow copies); fall back to any img with a real src
-  const mainImgEl = el.querySelector("img.ytImageStickerImageActual")
-    || [...el.querySelectorAll("img")].find(img => img.getAttribute("src"));
-  const rawSrc   = mainImgEl ? mainImgEl.getAttribute("src") : null;
+  // Exact path to sticker image (first img.ytCoreImageHost inside ytImageStickerHost)
+  const mainImgEl = el.querySelector(
+    "div.ytOverlayProductStickerHost > a.ytOverlayProductStickerImageContainer > div.ytImageStickerHost > img.ytCoreImageHost"
+  );
+  const rawSrc    = mainImgEl ? mainImgEl.getAttribute("src") : null;
   const mainImage = rawSrc ? mainImgEl.src : null;
   const mainTitle = mainImgEl ? mainImgEl.alt : null;
 
